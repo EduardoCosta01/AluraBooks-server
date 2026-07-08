@@ -9,20 +9,31 @@ function getTodosLivros() {
 
 function getLivroPorId(id) {
     const livros = getTodosLivros()
-    return livros.find(livro => livro.id === id)
+    const idNumero = Number(id)
+    return livros.find(livro => Number(livro.id) === idNumero)
 }
 
 function insereLivro(livroNovo) {
     const livros = getTodosLivros()
-    const novaListaLivro = [...livros, livroNovo]
+    const novoId = livros.length > 0
+        ? Math.max(...livros.map(livro => Number(livro.id))) + 1
+        : 1
+
+    const livroComId = {
+        ...livroNovo,
+        id: novoId
+    }
+
+    const novaListaLivro = [...livros, livroComId]
 
     fs.writeFileSync(arquivo, JSON.stringify(novaListaLivro, null, 2))
-    return novaListaLivro
+    return livroComId
 }
 
 function modificaLivro(atualizacoes, id) {
     const livrosAtuais = getTodosLivros()
-    const indiceModificado = livrosAtuais.findIndex(livro => livro.id === id)
+    const idNumero = Number(id)
+    const indiceModificado = livrosAtuais.findIndex(livro => Number(livro.id) === idNumero)
 
     if (indiceModificado === -1) {
         throw new Error('Livro não encontrado')
@@ -41,7 +52,8 @@ function modificaLivro(atualizacoes, id) {
 
 function deletaLivroId(id) {
     const livros = getTodosLivros()
-    const livrosFiltrados = livros.filter(livro => livro.id !== id)
+    const idNumero = Number(id)
+    const livrosFiltrados = livros.filter(livro => Number(livro.id) !== idNumero)
 
     fs.writeFileSync(arquivo, JSON.stringify(livrosFiltrados, null, 2))
     return livrosFiltrados
